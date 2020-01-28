@@ -14,6 +14,8 @@ workflows:
           repo: 'nginx-circleci-sample'
           tag: "${CIRCLE_SHA1}"
       - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build-and-push-image
           family: 'sample-website'
           service-name: 'sample-website-service'
           cluster-name: 'sample-website-cluster'
