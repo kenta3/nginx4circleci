@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.7.0
+  aws-ecs: circleci/aws-ecs@1.0.5
+  aws-code-deploy: circleci/aws-code-deploy@0.0.12
+
+workflows:
+  build_and_push_image:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: 'nginx-circleci-sample'
+          tag: "${CIRCLE_SHA1}"
+      - aws-ecs/deploy-service-update:
+          family: 'sample-website'
+          service-name: 'sample-website-service'
+          cluster-name: 'sample-website-cluster'
+          deployment-controller: 'CODE_DEPLOY'
+          codedeploy-application-name: 'AppECS-sample-website-cluster-sample-website-service'
+          codedeploy-deployment-group-name: 'DgpECS-sample-website-cluster-sample-website-service'
+          codedeploy-load-balanced-container-name: 'nginx-circleci-sample'
+          codedeploy-load-balanced-container-port: 80
+          container-image-name-updates: 'container=nginx-circleci-sample,image-and-tag=${ECR_URI_NO_TAG}:${CIRCLE_SHA1}'

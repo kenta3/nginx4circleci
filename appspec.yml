@@ -1,0 +1,7 @@
+version: 5.0
+Resources:
+  - TargetService:
+      Properties:
+        LoadBalancerInfo:
+          ContainerName: "nginx-circleci-sample"
+          ContainerPort: 80
